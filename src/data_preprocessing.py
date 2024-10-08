@@ -3,6 +3,7 @@ from statsforecast.models import AutoARIMA
 import os 
 import sys 
 from pathlib import Path
+import random 
 
 PACKAGE_ROOT = Path(os.path.abspath(os.path.dirname(__file__))).parent.parent
 sys.path.append(str(PACKAGE_ROOT))
@@ -21,6 +22,22 @@ def seperating_dataset(df):
     df_ma = df[df['merchant_id'].isin(less_than_13m)]
     df_hw = df[df['merchant_id'].isin(more_than_13m)]
     return df_ma, df_hw
+
+def test_seperating_dataset(df):
+    # counting df point of each merchant
+    df_point = df.groupby('merchant_id')['based_month'].count()
+    # seperating list of merchant
+    less_than_13m = df_point[(df_point >= 4) & (df_point <= 13)].index
+    more_than_13m = df_point[df_point > 13].index
+    # Seperating dataset
+    df_ma = df[df['merchant_id'].isin(less_than_13m)]
+    df_hw = df[df['merchant_id'].isin(more_than_13m)]
+    # pick random
+    random.seed(42)
+    df_ma_rd = df_ma[df_ma['merchant_id'].isin(random.sample(list(df_ma['merchant_id'].unique()),10))]
+    df_hw_rd = df_hw[df_hw['merchant_id'].isin(random.sample(list(df_hw['merchant_id'].unique()),10))]
+    return df_ma_rd, df_hw_rd
+
 
 def detecting_outlier(df):
     Q1 = df['net_revenue'].quantile(0.25)
@@ -98,7 +115,6 @@ def forecasting_average_revenue(data, merchant_id, predicted_month: int):
     })                   
     future_df = future_df.rename(columns={'net_revenue' : 'forecast_revenue'})
     return future_df
-
 
 
 #----------------------------MERGE OUTPUTS---------------------------

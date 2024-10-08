@@ -18,7 +18,7 @@ if __name__ == '__main__':
     print("Starting for AutoARIMA forecasting")
     # Loading dataset
     data = data_handling.load_dataset(config.DATA_FILE)
-    arima_data = data_preprocessing.seperating_dataset(data)[1]
+    arima_data = data_preprocessing.test_seperating_dataset(data)[1]
     # Preprocessing data
     arima_data = arima_data.groupby('merchant_id', group_keys=False).apply(data_preprocessing.detecting_outlier)
     arima_data = arima_data.groupby('merchant_id', group_keys=False).apply(data_preprocessing.detecting_missing_value)
@@ -42,7 +42,7 @@ if __name__ == '__main__':
     print("------------------------------")
     print("Starting for Average Revenue forecasting")
     # Loading dataset
-    average_rev_data = data_preprocessing.seperating_dataset(data)[0]
+    average_rev_data = data_preprocessing.test_seperating_dataset(data)[0]
     # Preprocessing data
     average_rev_data = average_rev_data.groupby('merchant_id', group_keys=False).apply(data_preprocessing.detecting_outlier)
     average_rev_data = average_rev_data.groupby('merchant_id', group_keys=False).apply(data_preprocessing.detecting_missing_value)
